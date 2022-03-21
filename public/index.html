@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="/javascripts/handlebars.js"></script>
+  <script src="/javascripts/script.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="styling.css">
+
+</head>
+<body>
+  <nav>
+    <ul class="nobull">
+      <h3 class="all">All Todos&nbsp&nbsp<i></i></h3>
+      <li id="allTodos" class="all"></li>
+      <h3 class="completed">All Completed&nbsp&nbsp<i>test</i></h3>
+      <li id="allCompleted" class="completed"></li>
+    </ul>
+  </nav>
+  
+  
+  <div id="currentType">
+    <h3 id="title"></h3>
+    <a id="addNew" href="#">+ Add New to do</a>
+    <div id="showTodos" name="defaultPage" selected="All">
+      <form id="allTodosForm">
+
+      </form>
+    </div>
+  </div>
+
+  <script id="todoLister" type="text/x-handlebars-template">
+    <div class="displayedItem" id="{{id}}">
+      <input id="{{id}}" type="checkbox">
+      <label class="itemText" id="{{id}}" completionStatus="{{completed}}">{{title}} - {{date}}</label>
+      <li style="font-size:24px" class="fa">&#xf014;</li>
+    </div>
+  </script>
+
+  
+  <div id="formHolder">
+    <form id="addNewTodo" class="aModal">
+      <label for="title">Title</label>
+      <input type="text" name="title">
+      
+      <label for="day">Day</label>
+      <select name="day"> 
+      </select>
+      
+      <label for="month">Month</label>
+      <select name="month">
+      </select>
+  
+      <label for="year">Year</label>
+      <select name="year">
+      </select>
+  
+      <label for="description">Description</label>
+      <input type="text" name="description">
+      
+      <input type="submit" value="Save" class="create">
+      <input type="submit" value="Mark As Complete" class="create">
+    </form>
+  </div>
+
+  <script id="navCompletedElementTemplate" type="text/x-handlebars-template">
+    <ul class="monthYearCompleted">
+      <p class="child completed">{{date}}&nbsp &nbsp &nbsp{{length}}</p>
+    </ul>
+  </script>
+
+  <script id="navAllTodoElementTemplate" type="text/x-handlebars-template">
+    <ul class="monthYearAllTodo">
+      <p class="child all">{{date}}&nbsp &nbsp &nbsp{{length}}</p>
+    </ul>
+  </script>
+
+  <script id="itemMakerTemplate" type="text/x-handlebars-template">
+    <ul class="itemContainer">
+      <input type="radio" name="radios" id="{{id}}">
+      <li class="item" id={{id}} completion={{completed}} data={{data}}>{{title}}&nbsp - &nbsp{{date}} &nbsp &nbsp</li>
+      <li style="font-size:24px" class="fa">&#xf014;</li>
+    </ul>
+  </script>
+
+  <script id="editForm" type="text/x-handlebars-template">
+    <form class="aModal edit" id="{{id}}" completion="{{completed}}">
+      <label for="title">Title</label>
+      <input type="text" name="title" value="{{title}}">
+      
+      <label for="day">Day</label>
+      <input type="number" name="day" min="1" max="31" value="{{day}}">
+
+      
+      <label for="month">Month</label>
+      <input type="number" name="month" min="1" max="12" value="{{month}}">
+  
+      <label for="year">Year</label>
+      <input type="number" name="year" min="2014" max="2022" value="{{year}}">
+  
+      <label for="description">Description</label>
+      <input type="text" name="description" value="{{description}}">
+      
+      <input type="submit" id="" value="Save" class="edit">
+      <input type="submit" id="" value="Mark As Complete" class="edit">
+    </form>
+  </script>
+
+  <script id="daysPartial" type="text/x-handlebars-template">
+    <option value="{{day}}">{{day}}</option>
+  </script>
+  
+  
+</body>
+</html>
