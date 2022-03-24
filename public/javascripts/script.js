@@ -80,31 +80,48 @@ class View {
     this.mainTitle = document.querySelector('#title')
     this.showForm()
     this.selector = document.querySelector('h3.all')
+    this.selectionInformation = {class: '', date: '', amount: 0}
     this.allTodosForm = document.querySelector('#allTodosForm')
     $(this.allTodosForm).show()
-    this.addCheckListener()
   }
 
   displayPage(todos) {
-    if (this.allTodosForm.children.length === 0) {
-      this.selector = document.querySelector('h3')
-      this.mainTitle.textContent = this.selector.textContent
-    }
     let allTodos = Object.assign({}, todos[0]);
     let allCompleted = Object.assign({}, todos[1]);
     this.localTodos = Object.values(allTodos).flat();
     this.updateNavAllTodos(allTodos);
     this.updateNavAllCompleted(allCompleted);
     this.listenToNavForSelection()
-
-    // this.displaySelection(this.localTodos);
-    this.changeTitle()
     this.focusNav()
+    this.getSelectorData(this.selector)
+    this.changeTitle()
   }
 
   changeTitle() {
+    let self = this
+    let noBullets = document.querySelector('.nobull')
+    let navElements = [...noBullets.querySelectorAll('h3')].concat([...noBullets.querySelectorAll('p')])
     let mainTitle = document.querySelector('#title')
-    mainTitle.textContent = this.selector.textContent
+    let lastSelector = navElements.filter(function(element) {
+      if (element.dataset.status ===  self.selectionInformation.class && element.dataset.date === self.selectionInformation.date) {
+        self.selector = element;
+        self.focusNav()
+        return true
+      }
+    })[0]
+    
+    if (lastSelector === undefined) {
+      this.getSelectorData(document.querySelector('h3'))
+      this.changeTitle()
+    } else {
+      mainTitle.textContent = `${lastSelector.dataset.date} ${lastSelector.dataset.length}`
+    }
+  }
+
+  getSelectorData(clickedTarget) {
+    this.selectionInformation.class = clickedTarget.dataset.status
+    this.selectionInformation.date = clickedTarget.dataset.date
+    this.selectionInformation.amount = clickedTarget.dataset.length
   }
 
   focusNav() {
@@ -119,7 +136,7 @@ class View {
       } else {
         element.classList.remove('focus')
       }
-    })  
+    })
   }
 
   buildForm() {
@@ -164,6 +181,7 @@ class View {
   }
 
   addTodo(handler) {
+    let self = this
     let form = document.querySelector('#addNewTodo')
     form.addEventListener('click', function(event) {
       event.preventDefault()
@@ -176,23 +194,15 @@ class View {
         handler(json);
         form.reset()
         $(form).hide()
+        self.selector = document.querySelector('h3')
       } else if (target.tagName === 'INPUT' && target.value === 'Mark As Complete') {
         alert('Cannot mark as complete as item has not been created yet!')
       }
     })
+    
   }
 
-  addCheckListener() {
-    document.addEventListener('click', function(event) {
-      event.preventDefault()
-      let target = event.target;
-      if (target.type === 'checkbox') {
-        if (target.checked === undefined || target.checked === false) {
-          target.checked = true
-        }
-      }
-    })
-  }
+
 
   listenToNavForSelection() {
     let self = this
@@ -201,11 +211,11 @@ class View {
       event.preventDefault()
       let target = event.target;
       if (target.tagName === 'H3' || target.tagName === 'P') {
+        self.getSelectorData(target)
         self.selector = target;
-        console.log(self.selector)
-        self.displaySelection(this.localTodos)
-        self.changeTitle()
+        self.displaySelection(self.localTodos)
         self.focusNav()
+        self.changeTitle()
       }
     })
   }
@@ -324,7 +334,8 @@ class View {
     })
     let amountAllTodos = Object.values(allTodos).flat().length
     let number = [...document.querySelectorAll('i')][0]
-    number.textContent = amountAllTodos; 
+    document.querySelector('.all').dataset.length = amountAllTodos
+    number.textContent = amountAllTodos;
   }
 
   updateNavAllCompleted(allCompleted) {
@@ -332,15 +343,18 @@ class View {
     let toFill = this.allCompletedNav
     $(toFill).empty()
     let completedKeys = Object.keys(allCompleted)
+    
     completedKeys.forEach(function(date) {
       let length = allCompleted[date].length
       let object = {date: date, length: length}
       let compiledHTML = template(object)
       toFill.insertAdjacentHTML('beforeend', compiledHTML);
     })
-    let amountAllCompleted = completedKeys.length
+
+    let amountAllCompleted = Object.values(allCompleted).flat().length
     let number = [...document.querySelectorAll('i')][1]
-    number.textContent = amountAllCompleted; 
+    document.querySelector('.completed').dataset.length = amountAllCompleted
+    number.textContent = amountAllCompleted;
   }
 
   displaySelection(allTodos) {
@@ -380,11 +394,9 @@ class View {
       else if (this.selector.classList.contains('completed') && date === 'No Due Date') {
         result = allTodos.filter(function(element) {
           if ((element.month === '' || element.day === '') && element.completed === true) {
-            console.log(element.completed)
             return true
           }
         })
-        console.log(result)
       } else if (this.selector.classList.contains('completed') && date !== 'No Due Date') {
         result = allTodos.filter(function(element) {
           if (date === `${element.month}/${element.year}` && element.completed === true) {
@@ -394,6 +406,12 @@ class View {
       }
     }
     this.fillMainDisplay(result)
+    if (this.allTodosForm.children.length === 0 && this.selector !== document.querySelector('h3')) {
+      this.selector = document.querySelector('h3')
+      this.changeTitle()
+      this.displaySelection(allTodos)
+      this.focusNav()
+    }
   }
 
   fillMainDisplay(todosToDisplay) {
@@ -513,7 +531,6 @@ class Controller {
       body: data
     })
     .then(response => {
-      console.log(response)
       self.getTodos()
     })
   }

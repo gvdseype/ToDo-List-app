@@ -15,9 +15,9 @@
 <body>
   <nav>
     <ul class="nobull">
-      <h3 class="all">All Todos&nbsp&nbsp<i></i></h3>
+      <h3 class="all" data-status="all" data-date="All Todos" data-length="">All Todos&nbsp&nbsp<i></i></h3>
       <li id="allTodos" class="all"></li>
-      <h3 class="completed">All Completed&nbsp&nbsp<i>test</i></h3>
+      <h3 class="completed" data-status="completed" data-date="All Completed" data-length="">All Completed&nbsp&nbsp<i>test</i></h3>
       <li id="allCompleted" class="completed"></li>
     </ul>
   </nav>
@@ -69,13 +69,13 @@
 
   <script id="navCompletedElementTemplate" type="text/x-handlebars-template">
     <ul class="monthYearCompleted">
-      <p class="child completed">{{date}}&nbsp &nbsp &nbsp{{length}}</p>
+      <p class="child completed" data-status="completed" data-date="{{date}}" data-length="{{length}}">{{date}}&nbsp &nbsp &nbsp{{length}}</p>
     </ul>
   </script>
 
   <script id="navAllTodoElementTemplate" type="text/x-handlebars-template">
     <ul class="monthYearAllTodo">
-      <p class="child all">{{date}}&nbsp &nbsp &nbsp{{length}}</p>
+      <p class="child all" data-status="all" data-date="{{date}}" data-length="{{length}}">{{date}}&nbsp &nbsp &nbsp{{length}}</p>
     </ul>
   </script>
 
